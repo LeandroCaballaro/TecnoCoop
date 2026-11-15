@@ -1,0 +1,88 @@
+:root {
+  --texto: #1f2937;
+  --suave: #4b5563;
+  --fondo: #f5f5f4;
+  --borde: #d6d3d1;
+  --acento: #1d4ed8;
+  --error: #b91c1c;
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.5 system-ui, sans-serif; color: var(--texto); background: var(--fondo); }
+main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+h2 { margin: 0 0 12px; }
+
+.banda { background: #fef3c7; color: #78350f; text-align: center; font-size: 14px; padding: 4px 8px; }
+.cabecera { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 8px 16px; background: #fff; border-bottom: 1px solid var(--borde); }
+.cabecera h1 { font-size: 20px; margin: 0; }
+.cabecera nav { display: flex; gap: 4px; flex: 1; }
+.cabecera a { padding: 10px 12px; color: var(--suave); text-decoration: none; border-radius: 6px; }
+.cabecera a.router-link-exact-active { background: #dbeafe; color: #1e3a8a; font-weight: 600; }
+.usuario { display: flex; gap: 8px; align-items: center; font-size: 14px; }
+
+button, select, input, textarea { font: inherit; }
+button { min-height: 44px; padding: 0 14px; border: 1px solid var(--borde); border-radius: 6px; background: #fff; cursor: pointer; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button.primario { background: var(--acento); border-color: var(--acento); color: #fff; }
+button.peligro { color: var(--error); border-color: var(--error); }
+button.rol { display: block; width: 100%; margin-top: 8px; text-align: left; }
+input, select, textarea { width: 100%; min-height: 44px; padding: 8px 10px; border: 1px solid var(--borde); border-radius: 6px; background: #fff; }
+label { display: block; margin-bottom: 12px; font-weight: 600; font-size: 14px; }
+label input, label select, label textarea { margin-top: 4px; font-weight: 400; }
+
+.tarjeta { background: #fff; border: 1px solid var(--borde); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+.angosta { max-width: 420px; margin: 24px auto; }
+.grilla { display: grid; gap: 0 12px; grid-template-columns: 1fr; }
+.filtros { display: grid; gap: 8px; grid-template-columns: 1fr; margin-bottom: 12px; }
+.error { color: var(--error); font-size: 14px; margin: 4px 0 8px; }
+.aviso { background: #fef3c7; color: #78350f; padding: 8px 12px; border-radius: 6px; font-size: 14px; }
+.ok { background: #dcfce7; color: #14532d; padding: 8px 12px; border-radius: 6px; }
+.vacio, .cargando { color: var(--suave); padding: 16px; text-align: center; }
+.insignia { display: inline-block; padding: 2px 8px; border-radius: 99px; color: #fff; font-size: 13px; white-space: nowrap; }
+
+/* Listado: tarjetas en celular, tabla desde 720 px */
+.tabla { width: 100%; border-collapse: collapse; font-size: 15px; }
+.tabla th, .tabla td { text-align: left; padding: 8px; border-bottom: 1px solid var(--borde); vertical-align: top; }
+.acciones { display: flex; flex-wrap: wrap; gap: 6px; }
+@media (max-width: 719px) {
+  .tabla thead { display: none; }
+  .tabla, .tabla tbody, .tabla tr, .tabla td { display: block; width: 100%; }
+  .tabla tr { border: 1px solid var(--borde); border-radius: 8px; padding: 8px; margin-bottom: 8px; background: #fff; }
+  .tabla td { border: 0; padding: 2px 0; }
+  .tabla td[data-et]::before { content: attr(data-et) ': '; font-weight: 600; }
+}
+@media (min-width: 720px) {
+  .grilla { grid-template-columns: repeat(3, 1fr); }
+  .filtros { grid-template-columns: 2fr 1fr 1fr; }
+}
+
+/* Tablero */
+.kpis { display: grid; gap: 12px; grid-template-columns: 1fr; margin-bottom: 16px; }
+.kpi { background: #fff; border: 1px solid var(--borde); border-radius: 8px; padding: 12px 16px; }
+.kpi .nombre { font-size: 14px; color: var(--suave); }
+.kpi .numero { font-size: 32px; font-weight: 700; }
+.kpi .meta { font-size: 14px; }
+.cumple { color: #15803d; } .nocumple { color: var(--error); } .nocalc { color: var(--suave); }
+.graficos { display: grid; gap: 16px; grid-template-columns: 1fr; }
+@media (min-width: 720px) { .kpis { grid-template-columns: repeat(3, 1fr); } .graficos { grid-template-columns: repeat(2, 1fr); } }
+
+/* Gráficos */
+.grafico { margin: 0; background: #fff; border: 1px solid var(--borde); border-radius: 8px; padding: 12px 16px; }
+.grafico figcaption { display: flex; flex-direction: column; margin-bottom: 8px; }
+.grafico figcaption span, .grafico .total { font-size: 14px; color: var(--suave); }
+.filas, .columnas { list-style: none; margin: 0; padding: 0; }
+.filas li { display: grid; grid-template-columns: 110px 1fr 64px; gap: 8px; align-items: center; margin-bottom: 6px; font-size: 14px; }
+.pista { background: #e7e5e4; border-radius: 4px; height: 18px; display: block; }
+.barra { display: block; height: 100%; border-radius: 4px; min-width: 2px; }
+.columnas { display: flex; align-items: flex-end; gap: 8px; height: 180px; padding-top: 20px; }
+.columnas li { flex: 1; height: 100%; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; font-size: 13px; }
+.barra-v { display: block; width: 100%; border-radius: 4px 4px 0 0; min-height: 2px; }
+.columnas .valor { font-weight: 600; }
+
+.solo-imprimir { display: none; }
+@media print {
+  .no-imprimir, .banda { display: none !important; }
+  .solo-imprimir { display: block; white-space: pre-wrap; }
+  body { background: #fff; }
+  main { max-width: none; padding: 0; }
+  .tarjeta, .grafico, .kpi { break-inside: avoid; }
+}

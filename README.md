@@ -1,24 +1,29 @@
 # TecnoCoop
 
 Precooperativa escolar de reparación de celulares, computadoras y pequeños electrodomésticos.
-Vue 3 + Vite + Supabase.
+Vue 3 + Vite + Supabase. Informe completo en [`docs/INFORME-TECNICO.md`](docs/INFORME-TECNICO.md).
 
 ## Estado
 
 | Parte | Estado |
 |---|---|
-| Listado de solicitudes con filtro | Implementado con **datos de prueba** (`src/data/mock.js`) |
-| Esquema SQL + RLS por rol | Diseñado en `db/schema.sql`, **sin ejecutar** aún |
-| Formularios, tablero, informe, Supabase, autenticación | Pendiente |
+| Solicitudes (alta, búsqueda, filtro, avance de estado, cancelación con motivo) | Implementado, con **datos y roles simulados** |
+| Tablero (3 KPI con meta, 3 gráficos, filtros de período y categoría) | Implementado |
+| Informe de seguimiento imprimible / PDF | Implementado; ejemplo en `docs/informe-seguimiento-periodo.pdf` |
+| Esquema SQL + RLS por rol + trigger (`db/`) | **Aplicado en Supabase** con datos de prueba; probado también en Postgres local |
+| Login real y permisos por rol | **Probados** en Supabase (15/15 casos de permisos; y la interfaz probada con los cuatro roles). Ver [`docs/SUPABASE.md`](docs/SUPABASE.md) |
 
 ## Correr
 
 ```bash
 npm install
 npm run dev
+npm test
 ```
+
+Sin variables `VITE_SUPABASE_*` la app usa datos ficticios en `localStorage` y un selector de rol sin contraseña.
+Con ellas (ver `.env.example`) usa Supabase y exige correo y contraseña.
 
 ## Seguridad
 
-Solo `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` van al cliente (ver `.env.example`).
-La clave `service_role` nunca se guarda en este repo.
+Solo `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY` van al cliente. La clave `service_role` nunca se guarda en este repo.
