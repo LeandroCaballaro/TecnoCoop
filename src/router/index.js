@@ -4,6 +4,8 @@ import { puede } from '../services/permisos.js'
 import SolicitudesView from '../views/SolicitudesView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegistroView from '../views/RegistroView.vue'
+import TableroView from '../views/TableroView.vue'
+import InformeView from '../views/InformeView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -11,8 +13,8 @@ const router = createRouter({
     { path: '/login', name: 'login', component: LoginView },
     { path: '/registro', name: 'registro', component: RegistroView },
     { path: '/', name: 'solicitudes', component: SolicitudesView, meta: { privada: true } },
-    { path: '/tablero', name: 'tablero', component: () => import('../views/TableroView.vue'), meta: { privada: true, permiso: 'tablero.ver' } },
-    { path: '/informe', name: 'informe', component: () => import('../views/InformeView.vue'), meta: { privada: true, permiso: 'informe.ver' } },
+    { path: '/tablero', name: 'tablero', component: TableroView, meta: { privada: true, permiso: 'tablero.ver' } },
+    { path: '/informe', name: 'informe', component: InformeView, meta: { privada: true, permiso: 'informe.ver' } },
     { path: '/:cualquiera(.*)*', redirect: '/' },
   ],
 })
