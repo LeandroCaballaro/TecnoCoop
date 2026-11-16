@@ -45,7 +45,7 @@ const fmt = (k) => (k.unidad === 'días' ? String(k.valor).replace('.', ',') : k
     <section class="kpis">
       <article v-for="k in kpis" :key="k.id" class="kpi">
         <div class="nombre">{{ k.nombre }}</div>
-        <div v-if="k.valor !== null" class="numero">{{ fmt(k) }} <small>{{ k.id === 'reparados' && k.valor === 1 ? 'equipo' : k.unidad }}</small></div>
+        <div v-if="k.valor !== null" class="numero">{{ fmt(k) }} <small>{{ k.valor === 1 ? k.unidad.replace('equipos', 'equipo').replace('días', 'día') : k.unidad }}</small></div>
         <div v-else class="nocalc"><strong>No calculable.</strong> {{ k.motivo }}</div>
         <div class="meta">
           Meta: {{ k.mejor === 'mayor' ? '≥' : '≤' }} {{ k.meta }} {{ k.unidad }} ·

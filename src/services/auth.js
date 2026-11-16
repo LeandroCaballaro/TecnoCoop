@@ -21,7 +21,7 @@ export async function iniciarSesion() {
       const { data } = await supabase.auth.getSession()
       if (data.session) await cargarPerfil(data.session.user)
     } else {
-      const rol = localStorage.getItem(KEY)
+      const rol = sessionStorage.getItem(KEY)
       if (ROLES[rol]) Object.assign(sesion, { usuario: { id: null, email: 'rol simulado' }, rol, simulado: true })
     }
   } catch {
@@ -49,7 +49,7 @@ export async function registrar(nombre, email, password) {
 export function loginSimulado(rol) {
   if (supabaseConfigurado || !ROLES[rol]) return
   try {
-    localStorage.setItem(KEY, rol)
+    sessionStorage.setItem(KEY, rol)
   } catch {
     /* la sesión dura hasta cerrar la pestaña */
   }
@@ -59,7 +59,7 @@ export function loginSimulado(rol) {
 export async function logout() {
   if (supabaseConfigurado) await supabase.auth.signOut()
   try {
-    localStorage.removeItem(KEY)
+    sessionStorage.removeItem(KEY)
   } catch {
     /* nada */
   }

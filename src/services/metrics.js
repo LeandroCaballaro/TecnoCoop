@@ -20,7 +20,8 @@ export function calcularKpis(sols, metas) {
   const reparados = entregadas.filter((s) => s.resultado === 'reparado').length
   const sinSolicitudes = 'No hay solicitudes en el período elegido.'
   const sinEntregas = 'Todavía no hay equipos entregados en el período: no se puede calcular.'
-  const dias = entregadas.map((s) => diasEntre(s.creada_en, s.entregada_en))
+  // Fechas inválidas o entrega anterior al ingreso no entran en el promedio.
+  const dias = entregadas.map((s) => diasEntre(s.creada_en, s.entregada_en)).filter((d) => Number.isFinite(d) && d >= 0)
 
   const kpis = [
     {
@@ -46,7 +47,7 @@ export function calcularKpis(sols, metas) {
       id: 'dias',
       nombre: 'Tiempo medio hasta la entrega',
       unidad: 'días',
-      valor: entregadas.length ? redondear(dias.reduce((a, b) => a + b, 0) / dias.length) : null,
+      valor: dias.length ? redondear(dias.reduce((a, b) => a + b, 0) / dias.length) : null,
       meta: metas.dias,
       mejor: 'menor',
       motivo: sinEntregas,
@@ -74,6 +75,7 @@ export const porCategoria = (sols) =>
 
 function lunesDe(iso) {
   const d = new Date(`${dia(iso)}T00:00:00Z`)
+  if (Number.isNaN(d.getTime())) return null
   d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7))
   return d.toISOString().slice(0, 10)
 }
@@ -82,6 +84,7 @@ export function porSemana(sols) {
   const cuenta = {}
   sols.forEach((s) => {
     const l = lunesDe(s.creada_en)
+    if (!l) return
     cuenta[l] = (cuenta[l] || 0) + 1
   })
   return Object.keys(cuenta)

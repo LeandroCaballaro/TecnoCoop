@@ -4,7 +4,7 @@ import { sesion } from '../services/auth.js'
 import { puede } from '../services/permisos.js'
 import { crearSolicitud, cambiarEstado } from '../services/data.js'
 import { useSolicitudes } from '../services/useSolicitudes.js'
-import { validarSolicitud, validarMotivo } from '../services/validar.js'
+import { validarSolicitud, validarMotivo, MAX } from '../services/validar.js'
 import { ESTADOS, ESTADO_ETIQUETA, ESTADO_COLOR, SIGUIENTE, CATEGORIAS, TIPOS_CLIENTE } from '../constants.js'
 
 const { solicitudes, estado: carga, error: errorCarga, cargar } = useSolicitudes()
@@ -20,7 +20,7 @@ const aviso = (tipo, texto) => (mensaje.value = { tipo, texto })
 const busqueda = ref('')
 const filtroEstado = ref('')
 const lista = computed(() => {
-  const q = busqueda.value.trim().toLowerCase()
+  const q = busqueda.value.trim().replace(/^#/, '').toLowerCase()
   return solicitudes.value.filter(
     (s) =>
       (!filtroEstado.value || s.estado === filtroEstado.value) &&
@@ -87,8 +87,8 @@ const abierta = (s) => SIGUIENTE[s.estado] !== undefined
     <h2>Nueva solicitud</h2>
     <form novalidate @submit.prevent="registrar">
       <div class="grilla">
-        <label>Cliente <input v-model="form.cliente" /><span v-if="errores.cliente" class="error">{{ errores.cliente }}</span></label>
-        <label>Contacto (correo o teléfono) <input v-model="form.contacto" /><span v-if="errores.contacto" class="error">{{ errores.contacto }}</span></label>
+        <label>Cliente <input v-model="form.cliente" :maxlength="MAX.cliente" /><span v-if="errores.cliente" class="error">{{ errores.cliente }}</span></label>
+        <label>Contacto (correo o teléfono) <input v-model="form.contacto" :maxlength="MAX.contacto" /><span v-if="errores.contacto" class="error">{{ errores.contacto }}</span></label>
         <label>
           Tipo de cliente
           <select v-model="form.tipo_cliente"><option value="">Elegir…</option><option v-for="(n, k) in TIPOS_CLIENTE" :key="k" :value="k">{{ n }}</option></select>
@@ -99,9 +99,9 @@ const abierta = (s) => SIGUIENTE[s.estado] !== undefined
           <select v-model="form.categoria"><option value="">Elegir…</option><option v-for="(n, k) in CATEGORIAS" :key="k" :value="k">{{ n }}</option></select>
           <span v-if="errores.categoria" class="error">{{ errores.categoria }}</span>
         </label>
-        <label>Equipo <input v-model="form.equipo" /><span v-if="errores.equipo" class="error">{{ errores.equipo }}</span></label>
+        <label>Equipo <input v-model="form.equipo" :maxlength="MAX.equipo" /><span v-if="errores.equipo" class="error">{{ errores.equipo }}</span></label>
       </div>
-      <label>Falla (mínimo 10 caracteres) <textarea v-model="form.falla" rows="2" /><span v-if="errores.falla" class="error">{{ errores.falla }}</span></label>
+      <label>Falla (10 a 1000 caracteres) <textarea v-model="form.falla" rows="2" :maxlength="MAX.falla" /><span v-if="errores.falla" class="error">{{ errores.falla }}</span></label>
       <button class="primario" :disabled="guardando">{{ guardando ? 'Guardando…' : 'Registrar equipo' }}</button>
     </form>
   </section>
@@ -137,7 +137,7 @@ const abierta = (s) => SIGUIENTE[s.estado] !== undefined
               <button v-if="puede(sesion.rol, 'solicitud.cancelar')" class="peligro" @click="pedirCancelar(s.id)">Cancelar</button>
             </div>
             <div v-if="cancelando === s.id">
-              <label>Motivo de la cancelación <textarea v-model="motivo" rows="2" /></label>
+              <label>Motivo de la cancelación <textarea v-model="motivo" rows="2" :maxlength="MAX.motivo" /></label>
               <p v-if="errorMotivo" class="error">{{ errorMotivo }}</p>
               <div class="acciones"><button class="peligro" @click="confirmarCancelar">Confirmar cancelación</button><button @click="cancelando = null">Volver</button></div>
             </div>

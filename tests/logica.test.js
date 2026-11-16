@@ -73,3 +73,26 @@ test('permisos por rol', () => {
   assert.equal(puede('recepcion', 'solicitud.crear'), true)
   assert.equal(puede('inexistente', 'tablero.ver'), false)
 })
+
+test('contacto: teléfono exige 8 a 15 dígitos reales; correo válido', () => {
+  const ok = { cliente: 'Ana', tipo_cliente: 'alumno', categoria: 'movil', equipo: 'Cel', falla: 'No enciende nunca' }
+  const malo = (c) => 'contacto' in validarSolicitud({ ...ok, contacto: c })
+  for (const c of ['--------', '((((((((', '        ', '+12345678901234567', '1234567', 'a@b']) assert.ok(malo(c), c)
+  for (const c of ['+54 11 1234-5678', '(011) 4444 5555', 'a@b.co']) assert.ok(!malo(c), c)
+})
+
+test('límites de largo en alta y motivo', () => {
+  const f = { cliente: 'Ana', contacto: 'a@b.co', tipo_cliente: 'alumno', categoria: 'movil', equipo: 'Cel', falla: 'x'.repeat(1001) }
+  assert.ok('falla' in validarSolicitud(f))
+  assert.ok(validarMotivo('m'.repeat(501)))
+})
+
+test('fechas corruptas no rompen métricas ni el promedio de días', () => {
+  const sols = [
+    s({ estado: 'entregado', resultado: 'reparado', creada_en: 'basura', entregada_en: 'x' }),
+    s({ estado: 'entregado', resultado: 'reparado', creada_en: '2026-11-10', entregada_en: '2026-11-01' }),
+    s({ estado: 'entregado', resultado: 'reparado', entregada_en: '2026-11-04' }),
+  ]
+  assert.equal(calcularKpis(sols, METAS).find((x) => x.id === 'dias').valor, 2)
+  assert.equal(porSemana(sols).length, 2) // la fecha corrupta se omite
+})

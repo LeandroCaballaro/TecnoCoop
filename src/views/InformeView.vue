@@ -4,6 +4,7 @@ import BarChart from '../components/BarChart.vue'
 import { useSolicitudes, horaLegible } from '../services/useSolicitudes.js'
 import { filtrar, calcularKpis, porEstado, dia } from '../services/metrics.js'
 import { supabaseConfigurado } from '../lib/supabase.js'
+import { MAX } from '../services/validar.js'
 import { ESTADO_ETIQUETA, CATEGORIAS, METAS } from '../constants.js'
 
 const { solicitudes, estado, error, actualizado, cargar } = useSolicitudes()
@@ -85,7 +86,7 @@ const fmt = (k) => (k.valor === null ? 'No calculable' : `${String(k.valor).repl
       <section class="tarjeta">
         <h3>5. Interpretación y acciones de mejora</h3>
         <label class="no-imprimir">Redactá metas cumplidas, dificultades, patrones, qué necesita más información y al menos dos acciones de mejora
-          <textarea v-model="interpretacion" rows="8" />
+          <textarea v-model="interpretacion" rows="8" :maxlength="MAX.interpretacion" />
         </label>
         <p class="solo-imprimir">{{ interpretacion || '(sin interpretación redactada)' }}</p>
       </section>
