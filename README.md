@@ -1,7 +1,7 @@
 # TecnoCoop
 
 Precooperativa escolar de reparación de celulares, computadoras y pequeños electrodomésticos.
-Vue 3 + Vite + Supabase. Informe completo en [`docs/INFORME-TECNICO.md`](docs/INFORME-TECNICO.md).
+Vue 3 + Vite + Supabase. Informe completo en [`docs/INFORME.md`](docs/INFORME.md).
 
 ## Estado
 

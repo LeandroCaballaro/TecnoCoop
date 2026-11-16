@@ -17,6 +17,15 @@ const guardando = ref(false)
 const mensaje = ref({ tipo: '', texto: '' })
 const aviso = (tipo, texto) => (mensaje.value = { tipo, texto })
 
+// Globo junto al estado de la fila; se va solo a los 5 segundos.
+const globo = ref({ id: null, tipo: '', texto: '' })
+let temporizador
+function avisarFila(id, tipo, texto) {
+  clearTimeout(temporizador)
+  globo.value = { id, tipo, texto }
+  temporizador = setTimeout(() => (globo.value = { id: null, tipo: '', texto: '' }), 5000)
+}
+
 const busqueda = ref('')
 const filtroEstado = ref('')
 const lista = computed(() => {
@@ -36,7 +45,7 @@ async function registrar() {
     const id = await crearSolicitud(form)
     Object.assign(form, vacio())
     aviso('ok', `Solicitud #${id} registrada en estado «Recibido».`)
-    await cargar()
+    await cargar(true)
   } catch (e) {
     aviso('error', `No se pudo registrar: ${e.message}`)
   } finally {
@@ -49,10 +58,10 @@ async function avanzar(s) {
   try {
     const sig = SIGUIENTE[s.estado]
     await cambiarEstado(s.id, sig, sig === 'listo' ? { resultado: resultado[s.id] || 'reparado' } : {})
-    aviso('ok', `Solicitud #${s.id}: ${ESTADO_ETIQUETA[sig]}.`)
-    await cargar()
+    await cargar(true)
+    avisarFila(s.id, 'ok', `Pasó a «${ESTADO_ETIQUETA[sig]}»`)
   } catch (e) {
-    aviso('error', `No se pudo cambiar el estado: ${e.message}`)
+    avisarFila(s.id, 'error', `No se pudo cambiar: ${e.message}`)
   }
 }
 
@@ -69,11 +78,12 @@ async function confirmarCancelar() {
   if (errorMotivo.value) return
   try {
     await cambiarEstado(cancelando.value, 'cancelado', { nota: motivo.value.trim() })
-    aviso('ok', `Solicitud #${cancelando.value} cancelada. El historial se conserva.`)
+    const id = cancelando.value
     cancelando.value = null
-    await cargar()
+    await cargar(true)
+    avisarFila(id, 'ok', 'Cancelada. El historial se conserva.')
   } catch (e) {
-    aviso('error', `No se pudo cancelar: ${e.message}`)
+    avisarFila(cancelando.value, 'error', `No se pudo cancelar: ${e.message}`)
   }
 }
 
@@ -114,11 +124,11 @@ const abierta = (s) => SIGUIENTE[s.estado] !== undefined
         <option value="">Todos los estados</option>
         <option v-for="e in ESTADOS" :key="e" :value="e">{{ ESTADO_ETIQUETA[e] }}</option>
       </select>
-      <button @click="cargar">Actualizar</button>
+      <button @click="cargar()">Actualizar</button>
     </div>
 
     <p v-if="carga === 'cargando'" class="cargando">Cargando…</p>
-    <p v-else-if="carga === 'error'" class="error" role="alert">No se pudo cargar: {{ errorCarga }} <button @click="cargar">Reintentar</button></p>
+    <p v-else-if="carga === 'error'" class="error" role="alert">No se pudo cargar: {{ errorCarga }} <button @click="cargar()">Reintentar</button></p>
     <p v-else-if="!lista.length" class="vacio">No hay solicitudes con esos filtros.</p>
     <table v-else class="tabla">
       <thead><tr><th>N.º</th><th>Cliente</th><th>Equipo y falla</th><th>Estado</th><th>Acciones</th></tr></thead>
@@ -127,7 +137,12 @@ const abierta = (s) => SIGUIENTE[s.estado] !== undefined
           <td data-et="N.º">#{{ s.id }}</td>
           <td data-et="Cliente">{{ s.cliente }}</td>
           <td data-et="Equipo">{{ s.equipo }} — {{ s.falla }}</td>
-          <td data-et="Estado"><span class="insignia" :style="{ background: ESTADO_COLOR[s.estado] }">{{ ESTADO_ETIQUETA[s.estado] }}</span></td>
+          <td data-et="Estado">
+            <span class="estado">
+              <span class="insignia" :style="{ background: ESTADO_COLOR[s.estado] }">{{ ESTADO_ETIQUETA[s.estado] }}</span>
+              <span v-if="globo.id === s.id" class="globo" :class="globo.tipo" role="status">{{ globo.texto }}</span>
+            </span>
+          </td>
           <td>
             <div v-if="abierta(s)" class="acciones">
               <select v-if="s.estado === 'en_reparacion' && puede(sesion.rol, 'solicitud.avanzar')" v-model="resultado[s.id]" aria-label="Resultado">

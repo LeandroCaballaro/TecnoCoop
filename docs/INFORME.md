@@ -1,11 +1,5 @@
 # TecnoCoop — Informe técnico y especificación del sistema
 
-**Precooperativa escolar de reparación tecnológica y electrodomésticos**
-Escuela: [completar] · Curso: [completar] · Integrantes: [completar] · Fecha: noviembre de 2026
-
-> **Convención de estados.** En todo el documento cada función se rotula como **[DISEÑADO]** (especificado, sin código),
-> **[IMPLEMENTADO]** (existe código en este repositorio) o **[SIMULADO]** (funciona con datos o roles ficticios).
-> Estado real del repositorio al redactar este informe: ver la sección 9.
 
 ## Índice
 

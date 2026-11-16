@@ -8,15 +8,17 @@ export function useSolicitudes() {
   const error = ref('')
   const actualizado = ref(null)
 
-  async function cargar() {
-    estado.value = 'cargando'
+  // silencioso === true: refresca la lista sin mostrar «Cargando…» (la tabla no parpadea ni salta).
+  async function cargar(silencioso = false) {
+    const quieto = silencioso === true && estado.value === 'listo'
+    if (!quieto) estado.value = 'cargando'
     try {
       solicitudes.value = await listarSolicitudes()
       actualizado.value = new Date()
       estado.value = 'listo'
     } catch (e) {
       error.value = e.message
-      estado.value = 'error'
+      if (!quieto) estado.value = 'error'
     }
   }
   return { solicitudes, estado, error, actualizado, cargar }

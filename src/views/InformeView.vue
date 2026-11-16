@@ -37,7 +37,7 @@ const fmt = (k) => (k.valor === null ? 'No calculable' : `${String(k.valor).repl
   </section>
 
   <p v-if="estado === 'cargando'" class="cargando">Cargando…</p>
-  <p v-else-if="estado === 'error'" class="error" role="alert">No se pudo cargar el informe: {{ error }} <button @click="cargar">Reintentar</button></p>
+  <p v-else-if="estado === 'error'" class="error" role="alert">No se pudo cargar el informe: {{ error }} <button @click="cargar()">Reintentar</button></p>
   <template v-else>
     <section class="tarjeta">
       <h3>1. Datos generales</h3>

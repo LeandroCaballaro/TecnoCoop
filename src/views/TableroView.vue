@@ -34,12 +34,12 @@ const fmt = (k) => (k.unidad === 'días' ? String(k.valor).replace('.', ',') : k
     <label>Categoría
       <select v-model="categoria"><option value="">Todas</option><option v-for="(n, k) in CATEGORIAS" :key="k" :value="k">{{ n }}</option></select>
     </label>
-    <button @click="cargar" :disabled="estado === 'cargando'">Actualizar</button>
+    <button @click="cargar()" :disabled="estado === 'cargando'">Actualizar</button>
   </div>
   <p class="nocalc">Actualizado: {{ horaLegible(actualizado) }} · se renueva al ingresar y con el botón «Actualizar» (sin tiempo real).</p>
 
   <p v-if="estado === 'cargando'" class="cargando">Cargando…</p>
-  <p v-else-if="estado === 'error'" class="error" role="alert">No se pudo cargar el tablero: {{ error }} <button @click="cargar">Reintentar</button></p>
+  <p v-else-if="estado === 'error'" class="error" role="alert">No se pudo cargar el tablero: {{ error }} <button @click="cargar()">Reintentar</button></p>
   <p v-else-if="!filtradas.length" class="vacio">No hay solicitudes en este período y categoría. Probá con «Todo el historial».</p>
   <template v-else>
     <section class="kpis">
