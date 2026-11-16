@@ -8,7 +8,10 @@ const KEY = 'tecnocoop.sesion'
 
 async function cargarPerfil(user) {
   const { data, error } = await supabase.from('perfiles').select('rol').eq('id', user.id).single()
-  if (error || !data) throw new Error('Tu cuenta no tiene un rol asignado. Pedile a Administración que lo cargue.')
+  if (error || !data || data.rol === 'pendiente') {
+    await supabase.auth.signOut()
+    throw new Error('Tu cuenta no tiene un rol asignado. Pedile a Administración que lo cargue.')
+  }
   Object.assign(sesion, { usuario: user, rol: data.rol, simulado: false })
 }
 
@@ -30,6 +33,17 @@ export async function login(email, password) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
   if (error) throw new Error('Correo o contraseña incorrectos.')
   await cargarPerfil(data.user)
+}
+
+export async function registrar(nombre, email, password) {
+  const { error } = await supabase.auth.signUp({ email, password, options: { data: { nombre } } })
+  if (error) {
+    if (/already|registered/i.test(error.message)) throw new Error('Ese correo ya está registrado.')
+    if (/password/i.test(error.message)) throw new Error('La contraseña no es válida: probá con una más larga.')
+    throw new Error('No se pudo crear la cuenta: ' + error.message)
+  }
+  // Si Supabase abrió sesión al registrar, se cierra: el rol lo asigna un admin.
+  await supabase.auth.signOut()
 }
 
 export function loginSimulado(rol) {

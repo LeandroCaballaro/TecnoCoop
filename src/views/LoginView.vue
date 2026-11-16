@@ -45,6 +45,7 @@ function elegirRol(rol) {
       <label>Contraseña <input v-model="password" type="password" autocomplete="current-password" /></label>
       <p v-if="error" class="error" role="alert">{{ error }}</p>
       <button class="primario" :disabled="cargando">{{ cargando ? 'Ingresando…' : 'Ingresar' }}</button>
+      <p>¿No tenés cuenta? <router-link to="/registro">Registrate</router-link></p>
     </form>
 
     <template v-else>
